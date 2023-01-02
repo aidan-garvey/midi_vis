@@ -13,7 +13,7 @@ if inport is None:
     print('Error: MIDI input device not found')
     exit()
 else:
-    print(inport.name)
+    print(inport)
 
 outport: mido.ports.BaseOutput = None
 for dev in mido.get_output_names():
@@ -24,9 +24,11 @@ if outport is None:
     print('Error: MIDO output device not found')
     exit()
 else:
-    print(outport.name)
+    print(outport)
 
 active_sense = mido.Message('active_sensing')
+
+outport.send(mido.Message('start'))
 
 try:
     while True:
