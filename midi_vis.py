@@ -1,3 +1,4 @@
+import time
 
 import mido
 
@@ -11,10 +12,29 @@ for dev in mido.get_input_names():
 if inport is None:
     print('Error: MIDI input device not found')
     exit()
+else:
+    print(inport.name)
+
+outport: mido.ports.BaseOutput = None
+for dev in mido.get_output_names():
+    if dev.lower().find('t-8') >= 0:
+        outport = mido.open_output(dev)
+
+if outport is None:
+    print('Error: MIDO output device not found')
+    exit()
+else:
+    print(outport.name)
+
+active_sense = mido.Message('active_sensing')
 
 try:
     while True:
-        msg = inport.receive()
-        print(msg)
+        msg = inport.poll()
+        if msg is not None:
+            print(msg)
+        outport.send(active_sense)
+        time.sleep(0.1)
+        
 except:
     print('Bye!')
